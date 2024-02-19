@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+import BottomSheet from "@gorhom/bottom-sheet";
 import {
   StyleSheet,
   Text,
@@ -6,11 +6,11 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
-import { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { Marker, Callout } from "react-native-maps";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as Location from "expo-location";
 
@@ -28,6 +28,16 @@ export default function PersonMap() {
   };
 
   const [isVisible, setIsVisible] = useState(false);
+
+  const bottomSheetRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ["7%", "25%", "50%", "70%"], []);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index) => {
+    console.log("handleSheetChanges", index);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -62,12 +72,23 @@ export default function PersonMap() {
     })();
   }, []);
 
+  const locations = [
+    { id: "1", name: "Jennifer", address: "123 Main St" },
+    { id: "2", name: "Melanie", address: "456 Elm St" },
+    { id: "3", name: "Astor", address: "789 Oak St" },
+    // Add more locations as needed
+  ];
+
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.item}>
-      <Text>{item.title}</Text>
-      {/* Add more content as needed */}
+      <View style={styles.item}>
+        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.address}>{item.address}</Text>
+      </View>
     </TouchableOpacity>
   );
+
+  const [listData, setListData] = useState([]);
 
   const Tab = createBottomTabNavigator();
 
@@ -83,20 +104,41 @@ export default function PersonMap() {
             key={index}
             coordinate={marker.latlng}
             title={marker.title}
-            // description={marker.description}
             image={require("../assets/statue-of-liberty.png")}
-            onPress={() => setIsVisible(true)}
-          ></Marker>
+          >
+            {/* <Callout style={styles.callout}>
+              <View style={styles.calloutContainer}>
+                <Text style={styles.calloutText}>New York!</Text>
+                <Text>42 contacts</Text>
+                <Button
+                  title="Press Me"
+                  onPress={() => console.log("Button pressed")}
+                />
+              </View>
+            </Callout> */}
+          </Marker>
         ))}
       </MapView>
-      {isVisible && (
-        <FlatList
-          data={[1, 2, 3]}
-          renderItem={renderItem}
-          keyExtractor={(item) => item}
-          style={styles.list}
-        />
-      )}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+      >
+        <View>
+          <View style={styles.listHeaderContainer}>
+            <Text style={styles.listHeaderLeft}>People</Text>
+            <Text style={styles.listHeaderRight}>12 Contacts</Text>
+          </View>
+
+          <FlatList
+            data={locations}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+          />
+        </View>
+      </BottomSheet>
     </View>
   );
 }
@@ -109,5 +151,74 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: "300px",
     width: "300px",
+  },
+  list: {
+    maxHeight: 200,
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  callout: {
+    width: 150,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  calloutContainer: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  calloutText: {
+    marginBottom: 5,
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  listContainer: {
+    paddingVertical: 16,
+  },
+  item: {
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#ccc",
+  },
+  listHeaderLeft: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingTop: 0,
+    paddingLeft: 10,
+  },
+  listHeaderRight: {
+    fontSize: 10,
+    fontWeight: "bold",
+    paddingRight: 10,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  address: {
+    fontSize: 14,
+    color: "#666",
+  },
+  listHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+
+    width: "100%", // Adjust width as needed
   },
 });

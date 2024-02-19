@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,7 +12,7 @@ import PersonMap from "./components/PersonMap";
 import SearchScreen from "./components/SearchScreen";
 import LoginScreen from "./components/LoginScreen";
 import Home from "./components/HomeScreen";
-
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Location from "expo-location";
 
 const Stack = createNativeStackNavigator();
@@ -77,21 +77,22 @@ export default function App() {
           ></Marker>
         ))}
       </MapView> */
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          gestureEnabled: true,
-        }}
-      >
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          style={styles.container}
-        />
-        <Stack.Screen name="Home" component={Home} style={styles.container} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            gestureEnabled: true,
+          }}
+        >
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            style={styles.container}
+          />
+          <Stack.Screen name="Home" component={Home} style={styles.container} />
 
-        {/* <Tab.Navigator
+          {/* <Tab.Navigator
           tabBarOptions={{
             activeTintColor: "#007AFF", // Find My app's blue color
             inactiveTintColor: "gray",
@@ -128,8 +129,9 @@ export default function App() {
             }}
           />
         </Tab.Navigator> */}
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

@@ -23,17 +23,10 @@ import SearchScreen from "./SearchScreen";
 import LoginScreen from "./LoginScreen";
 import ProfileScreen from "./ProfileScreen";
 
+import MapWithList from "./MapWithList";
+
 const Home = () => {
   const navigation = useNavigation();
-
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        console.log("Logging out");
-        navigation.replace("Login");
-      })
-      .catch((error) => {});
-  };
 
   const [mapState, setMapState] = useState({
     region: {
