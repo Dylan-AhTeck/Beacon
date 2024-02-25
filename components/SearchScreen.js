@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   FlatList,
   Modal,
-  PanResponder,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // You may need to install this package
 import ProfileModal from "./ProfileModal";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const Stack = createNativeStackNavigator();
 
 const contactsData = [
   { id: 1, name: "John Doe", phone: "123-456-7890", location: "New York" },
@@ -85,11 +87,11 @@ const contactsData = [
   // Add more contacts as needed
 ];
 
-const SearchScreen = () => {
+const SearchScreenList = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    navigation.navigate("ProfileModal");
   };
 
   const groupContactsByLocation = () => {
@@ -125,7 +127,6 @@ const SearchScreen = () => {
           placeholderTextColor="#aaa"
         />
       </View>
-
       <FlatList
         data={Object.entries(groupedContacts)}
         renderItem={({ item }) => (
@@ -142,23 +143,6 @@ const SearchScreen = () => {
         )}
         keyExtractor={(item, index) => index.toString()}
       />
-      <ProfileModal
-        visible={isModalVisible}
-        toggleModal={toggleModal}
-      ></ProfileModal>
-      {/* <NavigationContainer>
-        <ProfileModal
-          visible={isModalVisible}
-          toggleModal={toggleModal}i
-        ></ProfileModal>
-        <Stack.Navigator>
-          <Stack.Screen name="ProfileModal" component={ProfileModal} />
-          <Stack.Screen
-            name="AddUserProfile"
-            component={AddUserProfileScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer> */}
 
       {/* <Modal
         animationType="slide"
@@ -184,6 +168,36 @@ const SearchScreen = () => {
         </View>
       </Modal> */}
     </View>
+  );
+};
+
+const ProfilePage = ({ route, navigation }) => {
+  const { profile } = route.params;
+
+  return (
+    <View style={styles.modalContent}>
+      <TouchableOpacity onPress={navigation.goBack}>
+        <Text style={styles.closeButton}>Close</Text>
+      </TouchableOpacity>
+      <Text>{profile.name}</Text>
+      <Text>{profile.username}</Text>
+    </View>
+  );
+};
+
+const SearchScreen = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName="SearchScreenTemp"
+    >
+      <Stack.Screen name="SearchScreenList" component={SearchScreenList} />
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
+        <Stack.Screen name="ProfileModal" component={ProfileModal} />
+      </Stack.Group>
+    </Stack.Navigator>
   );
 };
 
@@ -240,7 +254,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0, 0, 0, 0.3)", // Adjust the opacity as needed
-    zIndex: 0, // Ensure the overlay appears above other content
     elevation: 5, // Add elevation for shadow on Android
   },
   modalContent: {

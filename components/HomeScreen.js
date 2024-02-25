@@ -98,7 +98,7 @@ const Home = () => {
         }}
       >
         <Tab.Screen
-          name="Home"
+          name="PersonMap"
           component={PersonMap}
           options={{
             tabBarIcon: ({ color, size }) => (

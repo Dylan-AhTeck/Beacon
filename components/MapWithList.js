@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: "#ccc",
     elevation: 3,
-    zIndex: 1,
   },
   button: {
     position: "absolute",
