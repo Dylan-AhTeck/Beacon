@@ -23,8 +23,6 @@ import SearchScreen from "./SearchScreen";
 import LoginScreen from "./LoginScreen";
 import ProfileScreen from "./ProfileScreen";
 
-import MapWithList from "./MapWithList";
-
 const Home = () => {
   const navigation = useNavigation();
 

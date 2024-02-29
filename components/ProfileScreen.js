@@ -159,6 +159,11 @@ const ProfileScreen = ({ navigation }) => {
               />
             </View>
             <View style={styles.divider} />
+            <View style={styles.row}>
+              <Text style={styles.category}>Share My Phone Number</Text>
+              <Switch value={shareLocation} onValueChange={setShareLocation} />
+            </View>
+            <View style={styles.divider} />
 
             <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.signOutText}>Sign Out</Text>
